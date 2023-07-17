@@ -2,16 +2,19 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from flask import Flask, request, jsonify, render_template
 import joblib 
 import os
+import numpy as np
+
+from flask import Flask, request, jsonify, render_template
+from dash import Dash, dcc, html, Input, Output, dash_table
+import plotly.express as px
 
 # Load the data
 df = pd.read_csv('data/creditcard.csv')
 
 # Get and print the feature names
-features = df.drop('Class', axis=1)
-print(features.columns)
+features = df.drop('Class', axis=1).columns.tolist()
 
 # Split your data into features (X) and target (y)
 X = df.drop('Class', axis=1)
@@ -35,22 +38,42 @@ joblib.dump(model, 'model.pkl')
 
 app = Flask(__name__)
 
+# Create a Dash app within the Flask app
+dash_app = Dash(__name__, server=app, url_base_pathname='/dash/')
+
 # Load the model
 model = joblib.load('model.pkl')
 
-# This is the new function to make a prediction
-def make_prediction(data):
-    # Convert data to numeric values and create a list of values
-    data_values = [float(value) for value in data.values()]
+# Dash layout for the dashboard
+dash_app.layout = html.Div(children=[
+    html.H1(children='Credit Card Fraud Detection'),
 
-    if len(data_values) != 30:  # Replace with the number of features your model expects
-        raise ValueError(f"Expected 30 features, but got {len(data_values)}")
-    
-    # Make a prediction using the model
-    prediction = model.predict([data_values])
-    
-    return int(prediction[0])
+    dcc.Graph(id='bar-chart'),
 
+    dash_table.DataTable(
+        id='table',
+        columns=[{"name": i, "id": i} for i in df.columns],
+        data=df.to_dict('records'),
+    )
+])
+
+# Function to generate random data
+def generate_random_data():
+    random_data = {feature: np.random.choice(df[feature]) for feature in features}
+    return random_data
+
+# Callback for updating the bar chart
+@dash_app.callback(
+    Output('bar-chart', 'figure'),
+    Input('table', 'selected_rows')
+)
+def update_bar_chart(selected_rows):
+    if selected_rows is None:
+        return px.bar()
+    else:
+        dff = df.loc[selected_rows]
+        figure = px.bar(dff, x='Class', y='Amount', color='Class', barmode='group')
+        return figure
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -58,32 +81,26 @@ def predict():
     form_data = request.form
     
     # Extract each feature from the form data and convert to float
-    features = [
-        'Time', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10',
-        'V11', 'V12', 'V13', 'V14', 'V15', 'V16', 'V17', 'V18', 'V19', 'V20',
-        'V21', 'V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'Amount'
-    ]
+    data = {feature: float(form_data[feature]) for feature in features}
     
-    data = []
-    for feature in features:
-        data.append(float(form_data[feature]))
-
     # Make a prediction using the model
-    prediction = model.predict([data])
-
+    prediction = model.predict([list(data.values())])
+    
     # Return the prediction
-    return render_template('index.html', prediction=int(prediction[0]))
-
-
+    return render_template('index.html', prediction=int(prediction[0]), data=data)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         # Get data from form and make prediction
-        data = request.form
-        prediction = make_prediction(data)
-        return render_template('index.html', prediction=prediction)
-    return render_template('index.html')
+        form_data = request.form
+        data = {feature: float(form_data[feature]) for feature in features}
+        prediction = model.predict([list(data.values())])
+        return render_template('index.html', prediction=int(prediction[0]), data=data)
+    else:
+        # Generate random data for the form
+        data = generate_random_data()
+        return render_template('index.html', data=data)
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
