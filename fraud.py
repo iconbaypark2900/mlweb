@@ -2,19 +2,20 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-import joblib 
+from flask import Flask, request, render_template, redirect
+import joblib
 import os
+from dash import Dash, dcc, html, dash_table
+from random import randint
 import numpy as np
 
-from flask import Flask, request, jsonify, render_template
-from dash import Dash, dcc, html, Input, Output, dash_table
-import plotly.express as px
+app = Flask(__name__)
+
+# Create a new Dash app
+dash_app = Dash(__name__, server=app, url_base_pathname='/dashboard/')
 
 # Load the data
 df = pd.read_csv('data/creditcard.csv')
-
-# Get and print the feature names
-features = df.drop('Class', axis=1).columns.tolist()
 
 # Split your data into features (X) and target (y)
 X = df.drop('Class', axis=1)
@@ -36,73 +37,52 @@ model.fit(X_train, y_train)
 # Now that your model is trained, you can save it
 joblib.dump(model, 'model.pkl')
 
-app = Flask(__name__)
-
-# Create a Dash app within the Flask app
-dash_app = Dash(__name__, server=app, url_base_pathname='/dash/')
-
 # Load the model
 model = joblib.load('model.pkl')
 
-# Dash layout for the dashboard
-dash_app.layout = html.Div(children=[
-    html.H1(children='Credit Card Fraud Detection'),
+def generate_sample():
+    data = {}
+    for column in df.columns:
+        if column != 'Class':
+            data[column] = np.random.uniform(df[column].min(), df[column].max())
+    return data
 
-    dcc.Graph(id='bar-chart'),
+def make_prediction(data):
+    # Convert data to numeric values and create a list of values
+    data_values = [float(value) for value in data.values()]
 
-    dash_table.DataTable(
-        id='table',
-        columns=[{"name": i, "id": i} for i in df.columns],
-        data=df.to_dict('records'),
-    )
-])
-
-# Function to generate random data
-def generate_random_data():
-    random_data = {feature: np.random.choice(df[feature]) for feature in features}
-    return random_data
-
-# Callback for updating the bar chart
-@dash_app.callback(
-    Output('bar-chart', 'figure'),
-    Input('table', 'selected_rows')
-)
-def update_bar_chart(selected_rows):
-    if selected_rows is None:
-        return px.bar()
-    else:
-        dff = df.loc[selected_rows]
-        figure = px.bar(dff, x='Class', y='Amount', color='Class', barmode='group')
-        return figure
-
-@app.route('/predict', methods=['POST'])
-def predict():
-    # Get the data from the POST request
-    form_data = request.form
-    
-    # Extract each feature from the form data and convert to float
-    data = {feature: float(form_data[feature]) for feature in features}
+    if len(data_values) != 30:
+        raise ValueError(f"Expected 30 features, but got {len(data_values)}")
     
     # Make a prediction using the model
-    prediction = model.predict([list(data.values())])
+    prediction = model.predict([data_values])
     
-    # Return the prediction
-    return render_template('index.html', prediction=int(prediction[0]), data=data)
+    return int(prediction[0])
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         # Get data from form and make prediction
-        form_data = request.form
-        data = {feature: float(form_data[feature]) for feature in features}
-        prediction = model.predict([list(data.values())])
-        return render_template('index.html', prediction=int(prediction[0]), data=data)
-    else:
-        # Generate random data for the form
-        data = generate_random_data()
-        return render_template('index.html', data=data)
+        data = request.form
+        prediction = make_prediction(data)
+        return render_template('index.html', prediction=prediction, data=data)
+    
+    sample = generate_sample()
+    return render_template('index.html', data=sample)
+
+@app.route('/dashboard/', methods=['GET'])
+def render_dashboard():
+    return redirect('/dashboard')
+
+dash_app.layout = html.Div(children=[
+    html.H1(children='Credit Card Fraud Detection'),
+
+    dash_table.DataTable(
+        id='table',
+        columns=[{"name": i, "id": i} for i in df.columns],
+        data=df.to_dict('records'),
+    ),
+])
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
-
-

@@ -1,106 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title>Fraud Detection Prediction</title>
+        <meta charset="UTF-8">
+        <title>Credit Card Fraud Detection</title>
     </head>
     <body>
-        <h1>Fraud Detection Prediction</h1>
-        <form action="/" method="post">
-            <label for="Time">Time:</label><br>
-            <input type="text" id="Time" name="Time"><br>
-            <!-- Repeat the above two lines for each feature, replacing 'Time' with the feature name -->
-            <label for="V1">V1:</label><br>
-            <input type="text" id="V1" name="V1"><br>
-            <!-- ... -->
-            <label for="V2">V2:</label><br>
-            <input type="text" id="V2" name="V2"><br>
-            <!-- ... -->
-            <label for="V3">V3:</label><br>
-            <input type="text" id="V3" name="V3"><br>
-            <!-- ... -->
-            <label for="V4">V4:</label><br>
-            <input type="text" id="V4" name="V4"><br>
-            <!-- ... -->
-            <label for="V5">V5:</label><br>
-            <input type="text" id="V5" name="V5"><br>
-            <!-- ... -->
-            <label for="V6">V6:</label><br>
-            <input type="text" id="V6" name="V6"><br>
-            <!-- ... -->
-            <label for="V7">V7:</label><br>
-            <input type="text" id="V7" name="V7"><br>
-            <!-- ... -->
-            <label for="V8">V8:</label><br>
-            <input type="text" id="V8" name="V8"><br>
-            <!-- ... -->
-            <label for="V9">V9:</label><br>
-            <input type="text" id="V9" name="V9"><br>
-            <!-- ... -->
-            <label for="V10">V10:</label><br>
-            <input type="text" id="V10" name="V10"><br>
-            <!-- ... -->
-            <label for="V11">V11:</label><br>
-            <input type="text" id="V11" name="V11"><br>
-            <!-- ... -->
-            <label for="V12">V12:</label><br>
-            <input type="text" id="V12" name="V12"><br>
-            <!-- ... -->
-            <label for="V13">V13:</label><br>
-            <input type="text" id="V13" name="V13"><br>
-            <!-- ... -->
-            <label for="V14">V14:</label><br>
-            <input type="text" id="V14" name="V14"><br>
-            <!-- ... -->
-            <label for="V15">V15:</label><br>
-            <input type="text" id="V15" name="V15"><br>
-            <!-- ... -->
-            <label for="V16">V16:</label><br>
-            <input type="text" id="V16" name="V16"><br>
-            <!-- ... -->
-            <label for="V17">V17:</label><br>
-            <input type="text" id="V17" name="V17"><br>
-            <!-- ... -->
-            <label for="V18">V18:</label><br>
-            <input type="text" id="V18" name="V18"><br>
-            <!-- ... -->
-            <label for="V19">V19:</label><br>
-            <input type="text" id="V19" name="V19"><br>
-            <!-- ... -->
-            <label for="V20">V20:</label><br>
-            <input type="text" id="V20" name="V20"><br>
-            <!-- ... -->
-            <label for="V21">V21:</label><br>
-            <input type="text" id="V21" name="V21"><br>
-            <!-- ... -->
-            <label for="V22">V22:</label><br>
-            <input type="text" id="V22" name="V22"><br>
-            <!-- ... -->
-            <label for="V23">V23:</label><br>
-            <input type="text" id="V23" name="V23"><br>
-            <!-- ... -->
-            <label for="V24">V24:</label><br>
-            <input type="text" id="V24" name="V24"><br>
-            <!-- ... -->
-            <label for="V25">V25:</label><br>
-            <input type="text" id="V25" name="V25"><br>
-            <!-- ... -->
-            <label for="V26">V26:</label><br>
-            <input type="text" id="V26" name="V26"><br>
-            <!-- ... -->
-            <label for="V27">V27:</label><br>
-            <input type="text" id="V27" name="V27"><br>
-            <!-- ... -->
-            <label for="V28">V28:</label><br>
-            <input type="text" id="V28" name="V28"><br>
-            <!-- ... -->
+        <h1>Credit Card Fraud Detection</h1>
+
+        <form method="POST" action="/">
+            <label for="time">Time:</label><br>
+            <input type="number" id="time" name="Time" value="{{ data['Time'] }}"><br>
             
-            <label for="Amount">Amount:</label><br>
-            <input type="text" id="Amount" name="Amount"><br>
-            <input type="submit" value="Predict">
+            <!-- ... Add the other feature fields here ... -->
+            <label for="V1">V1:</label><br>
+            <input type="number" id="V1" name="V1" value="{{ data['V1'] }}"><br>
+
+            <label for="V2">V2:</label><br>
+            <input type="number" id="V2" name="V2" value="{{ data['V2'] }}"><br>
+
+            <label for="V3">V3:</label><br>
+            <input type="number" id="V3" name="V3" value="{{ data['V3'] }}"><br>
+
+            <label for="V4">V4:</label><br>
+            <input type="number" id="V4" name="V4" value="{{ data['V4'] }}"><br>
+
+            <label for="V5">V5:</label><br>
+            <input type="number" id="V5" name="V5" value="{{ data['V5'] }}"><br>
+
+            <label for="V6">V6:</label><br>
+            <input type="number" id="V6" name="V6" value="{{ data['V6'] }}"><br>
+
+            <label for="V7">V7:</label><br>
+            <input type="number" id="V7" name="V7" value="{{ data['V7'] }}"><br>
+
+            <label for="V8">V8:</label><br>
+            <input type="number" id="V8" name="V8" value="{{ data['V8'] }}"><br>
+
+            <label for="V9">V9:</label><br>
+            <input type="number" id="V9" name="V9" value="{{ data['V9'] }}"><br>
+            
+            <label for="V10">V10:</label><br>
+            <input type="number" id="V10" name="V10" value="{{ data['V10'] }}"><br>
+
+            <label for="V11">V11:</label><br>
+            <input type="number" id="V11" name="V11" value="{{ data['V11'] }}"><br>
+
+            <label for="V12">V12:</label><br>
+            <input type="number" id="V12" name="V12" value="{{ data['V12'] }}"><br>
+
+            <label for="V13">V13:</label><br>
+            <input type="number" id="V13" name="V13" value="{{ data['V13'] }}"><br>
+
+            <label for="V14">V14:</label><br>
+            <input type="number" id="V14" name="V14" value="{{ data['V14'] }}"><br>
+
+            <label for="V15">V15:</label><br>
+            <input type="number" id="V15" name="V15" value="{{ data['V15'] }}"><br>
+
+            <label for="V16">V16:</label><br>
+            <input type="number" id="V16" name="V16" value="{{ data['V16'] }}"><br>
+
+            <label for="V17">V17:</label><br>
+            <input type="number" id="V17" name="V17" value="{{ data['V17'] }}"><br>
+
+            <label for="V18">V18:</label><br>
+            <input type="number" id="V18" name="V18" value="{{ data['V18'] }}"><br>
+
+            <label for="V19">V19:</label><br>
+            <input type="number" id="V19" name="V19" value="{{ data['V19'] }}"><br>
+
+            <label for="V20">V20:</label><br>
+            <input type="number" id="V20" name="V20" value="{{ data['V20'] }}"><br>
+
+            <label for="V21">V21:</label><br>
+            <input type="number" id="V21" name="V21" value="{{ data['V21'] }}"><br>
+            
+            <label for="V22">V22:</label><br>
+            <input type="number" id="V22" name="V22" value="{{ data['V22'] }}"><br>
+
+            <label for="V23">V23:</label><br>
+            <input type="number" id="V23" name="V23" value="{{ data['V23'] }}"><br>
+
+            <label for="V24">V24:</label><br>
+            <input type="number" id="V24" name="V24" value="{{ data['V24'] }}"><br>
+
+            <label for="V25">V25:</label><br>
+            <input type="number" id="V25" name="V25" value="{{ data['V25'] }}"><br>
+
+            <label for="V26">V26:</label><br>
+            <input type="number" id="V26" name="V26" value="{{ data['V26'] }}"><br>
+
+            <label for="V27">V27:</label><br>
+            <input type="number" id="V27" name="V27" value="{{ data['V27'] }}"><br>
+
+            <label for="V28">V28:</label><br>
+            <input type="number" id="V28" name="V28" value="{{ data['V28'] }}"><br>
+
+            <label for="amount">Amount:</label><br>
+            <input type="number" id="amount" name="Amount" value="{{ data['Amount'] }}"><br>
+            
+            <input type="submit" value="Submit">
         </form>
-        {% if prediction is defined %}
-        <h2>Prediction: {{ prediction }}</h2>
+
+        <!-- Show the prediction if it exists -->
+        {% if prediction is not none %}
+            <h2>Prediction: {{ prediction }}</h2>
         {% endif %}
     </body>
 </html>
+
 
