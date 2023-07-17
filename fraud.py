@@ -55,21 +55,24 @@ def make_prediction(data):
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get the data from the POST request
-    data = request.form.to_dict()
+    form_data = request.form
     
-    # Convert each value in data to float
-    for key in data:
-        try:
-            # Remove trailing commas if any, and convert to float
-            data[key] = float(data[key].rstrip(','))
-        except ValueError:
-            return f"Invalid value for {key}: {data[key]}"
+    # Extract each feature from the form data and convert to float
+    features = [
+        'Time', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6', 'V7', 'V8', 'V9', 'V10',
+        'V11', 'V12', 'V13', 'V14', 'V15', 'V16', 'V17', 'V18', 'V19', 'V20',
+        'V21', 'V22', 'V23', 'V24', 'V25', 'V26', 'V27', 'V28', 'Amount'
+    ]
+    
+    data = []
+    for feature in features:
+        data.append(float(form_data[feature]))
 
     # Make a prediction using the model
-    prediction = model.predict([list(data.values())])
+    prediction = model.predict([data])
 
     # Return the prediction
-    return jsonify({'prediction': int(prediction[0])})
+    return render_template('index.html', prediction=int(prediction[0]))
 
 
 
