@@ -7,8 +7,8 @@ This application is a machine learning model deployed on a Flask web server, des
 1. Clone this repository to your local machine.
 
     ```bash
-    git clone https://github.com/yourusername/credit-card-fraud-detection.git
-    cd credit-card-fraud-detection
+    git clone https://github.com/yourusername/mlweb.git
+    cd mlweb
     ```
 
 2. Set up a virtual environment (Optional but recommended).
